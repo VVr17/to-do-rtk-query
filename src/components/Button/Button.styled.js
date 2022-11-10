@@ -40,4 +40,10 @@ export const ButtonStyled = styled.button`
   :not(:last-of-type) {
     margin-right: ${p => p.theme.space[3]}px;
   }
+
+  :disabled {
+    color: ${p => p.theme.colors.inputText};
+    background-color: ${p => p.theme.colors.secondaryTextColor};
+    border-color: ${p => p.theme.colors.secondaryTextColor};
+  }
 `;

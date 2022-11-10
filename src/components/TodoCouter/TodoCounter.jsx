@@ -1,10 +1,9 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
-import { selectCompletedTodosCount, selectTodos } from 'redux/selectors';
+import { useFetchTodosQuery } from 'redux/todoSlice';
 
 export const TodoCounter = () => {
-  const todos = useSelector(selectTodos);
-  const completed = useSelector(selectCompletedTodosCount);
+  const { data: todos } = useFetchTodosQuery();
+  const completed = countCompletedTodos(todos);
   const active = todos.length - completed;
 
   return (
@@ -15,3 +14,7 @@ export const TodoCounter = () => {
     </div>
   );
 };
+
+function countCompletedTodos(todos) {
+  return todos.reduce((total, todo) => (todo.completed ? total + 1 : total), 0);
+}

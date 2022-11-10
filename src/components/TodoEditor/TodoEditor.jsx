@@ -1,15 +1,17 @@
-import { useDispatch } from 'react-redux';
+// import { useDispatch } from 'react-redux';
 import { Button } from 'components/Button/Button';
+import { Loader } from 'components/Loader/Loader';
+import { useAddTodoMutation } from 'redux/todoSlice';
 import { Text, Form, Title } from './TodoEditor.styled';
-import { addTodo } from 'redux/operations';
+// import { addTodo } from 'redux/operations';
 
 export const TodoEditor = () => {
-  const dispatch = useDispatch();
+  const [addTodo, { isLoading }] = useAddTodoMutation();
 
   const handleSubmit = event => {
     event.preventDefault();
     const form = event.target;
-    dispatch(addTodo(form.text.value));
+    addTodo(form.text.value);
     form.reset();
   };
 
@@ -22,7 +24,10 @@ export const TodoEditor = () => {
           name="text"
           placeholder="please, enter text..."
         ></Text>
-        <Button type="submit">Add task</Button>
+        <Loader isLoading={isLoading} />
+        <Button type="submit" disabled={isLoading}>
+          Add task
+        </Button>
       </Form>
     </>
   );

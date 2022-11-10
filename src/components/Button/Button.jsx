@@ -6,9 +6,15 @@ export const Button = ({
   onClick,
   children,
   selected = false,
+  disabled = false,
 }) => {
   return (
-    <ButtonStyled type={type} onClick={onClick} selected={selected}>
+    <ButtonStyled
+      type={type}
+      onClick={onClick}
+      selected={selected}
+      disabled={disabled}
+    >
       {children}
     </ButtonStyled>
   );
@@ -17,6 +23,8 @@ export const Button = ({
 Button.propTypes = {
   type: PropTypes.string,
   name: PropTypes.string,
+  disabled: PropTypes.bool,
+  selected: PropTypes.bool,
   onClick: PropTypes.func,
   children: PropTypes.node,
 };

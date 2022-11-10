@@ -1,69 +1,53 @@
-import { createSlice } from '@reduxjs/toolkit';
-import { addTodo, deleteTodo, fetchTodos, toggleCompleted } from './operations';
+import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
-// USING IMMER - Immutable state changes
-const handlePending = state => {
-  state.isLoading = true;
-};
+export const todoApi = createApi({
+  reducerPath: 'todoApi',
+  baseQuery: fetchBaseQuery({
+    baseUrl: 'https://636a77a5c07d8f936d9ee251.mockapi.io',
+  }),
+  tagTypes: ['Todo'],
+  endpoints: builder => ({
+    fetchTodos: builder.query({
+      query: () => `/tasks`,
+      providesTags: ['Todo'],
+    }),
 
-const handleRejected = (state, { payload }) => {
-  state.isLoading = false;
-  state.error = payload;
-};
+    addTodo: builder.mutation({
+      query: text => ({
+        url: `/tasks`,
+        method: 'POST',
+        body: { text, completed: false },
+      }),
+      invalidatesTags: ['Todo'],
+    }),
 
-const todoInitialState = [];
+    deleteTodo: builder.mutation({
+      query: id => ({
+        url: `/tasks/${id}`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: ['Todo'],
+    }),
 
-const todoSlice = createSlice({
-  name: 'todos',
-  initialState: {
-    items: todoInitialState,
-    isLoading: false,
-    error: null,
-  },
-
-  // handle extra actions
-  extraReducers: {
-    // fetch all Todos from API
-    [fetchTodos.pending]: handlePending,
-    [fetchTodos.fulfilled](state, { payload }) {
-      state.isLoading = false;
-      state.error = null;
-      state.items = payload;
-    },
-    [fetchTodos.rejected]: handleRejected,
-
-    // add Todo
-    [addTodo.pending]: handlePending,
-    [addTodo.fulfilled](state, { payload }) {
-      state.isLoading = false;
-      state.error = null;
-      state.items.push(payload);
-    },
-    [addTodo.rejected]: handleRejected,
-
-    // delete Todo
-    [deleteTodo.pending]: handlePending,
-    [deleteTodo.fulfilled](state, { payload }) {
-      state.isLoading = false;
-      state.error = null;
-      const index = state.items.findIndex(({ id }) => id === payload.id);
-      state.items.splice(index, 1);
-    },
-    [deleteTodo.rejected]: handleRejected,
-
-    // toggle completed status
-    [toggleCompleted.pending]: handlePending,
-    [toggleCompleted.fulfilled](state, { payload }) {
-      state.isLoading = false;
-      state.error = null;
-      const index = state.items.findIndex(({ id }) => id === payload.id);
-      state.items.splice(index, 1, payload);
-    },
-    [toggleCompleted.rejected]: handleRejected,
-  },
+    toggleCompletedTodo: builder.mutation({
+      query: todo => ({
+        url: `/tasks/${todo.id}`,
+        method: 'PUT',
+        body: { ...todo, completed: !todo.completed },
+      }),
+      invalidatesTags: ['Todo'],
+    }),
+  }),
 });
 
-export const todoReducer = todoSlice.reducer;
+// Export hooks for usage in functional components, which are
+// auto-generated based on the defined endpoints
+export const {
+  useFetchTodosQuery,
+  useAddTodoMutation,
+  useDeleteTodoMutation,
+  useToggleCompletedTodoMutation,
+} = todoApi;
 
 // { id: 0, text: 'Learn HTML and CSS', completed: true },
 // { id: 1, text: 'Get good at JavaScript', completed: true },

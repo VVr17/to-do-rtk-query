@@ -1,13 +1,15 @@
 import { Button } from 'components/Button/Button';
-import { useDispatch } from 'react-redux';
-import { deleteTodo, toggleCompleted } from 'redux/operations';
-import { TextWrapper } from './Todo.styled';
+import {
+  useDeleteTodoMutation,
+  useToggleCompletedTodoMutation,
+} from 'redux/todoSlice';
+import { TextWrapper, UpdateNotification } from './Todo.styled';
 
 export const ToDo = ({ todo }) => {
-  const dispatch = useDispatch();
-  const handleDelete = () => dispatch(deleteTodo(todo.id));
-  const handleToggleCompleted = () => dispatch(toggleCompleted(todo));
   const { text, completed } = todo;
+  const [deleteTodo, { isLoading: isDeleting }] = useDeleteTodoMutation();
+  const [toggleCompleted, { isLoading: isUpdating }] =
+    useToggleCompletedTodoMutation();
 
   return (
     <>
@@ -15,11 +17,14 @@ export const ToDo = ({ todo }) => {
         <input
           type="checkbox"
           checked={completed}
-          onChange={handleToggleCompleted}
+          onChange={() => toggleCompleted(todo)}
         />
         <p>{text}</p>
       </TextWrapper>
-      <Button onClick={handleDelete}>Delete</Button>
+      {isUpdating && <UpdateNotification>Updating...</UpdateNotification>}
+      <Button onClick={() => deleteTodo(todo.id)}>
+        {isDeleting ? 'Deleting...' : 'Delete'}
+      </Button>
     </>
   );
 };

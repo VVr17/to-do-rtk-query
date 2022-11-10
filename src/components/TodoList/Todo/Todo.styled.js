@@ -17,3 +17,8 @@ export const TextWrapper = styled.div`
     text-decoration: ${p => (p.completed ? 'line-through' : 'none')};
   }
 `;
+
+export const UpdateNotification = styled.p`
+  margin-left: auto;
+  margin-right: ${p => p.theme.space[3]}px;
+`;
